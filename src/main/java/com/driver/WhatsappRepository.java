@@ -78,7 +78,10 @@ public class WhatsappRepository {
         if(isMember==false) throw new Exception("You are not allowed to send message");
 
         List<Message> messageList = new ArrayList<>();
-        if(groupMessageMap.containsKey(group)) messageList = groupMessageMap.get(group);
+
+        if(groupMessageMap.containsKey(group)) {
+            messageList = groupMessageMap.get(group);
+        }
 
         messageList.add(message);
         groupMessageMap.put(group, messageList);
@@ -110,10 +113,10 @@ public class WhatsappRepository {
         Group userGroup = null;
         for(Group group : groupUserMap.keySet()){
             if(groupUserMap.get(group).contains(user)){
+                userGroup = group;
                 if(Objects.equals(adminMap.get(userGroup).getName(), user.getName())){
                     throw new Exception("Cannot remove admin");
                 }
-                userGroup = group;
                 userFound = true;
                 break;
             }
@@ -179,5 +182,22 @@ public class WhatsappRepository {
         });
 
         return filteredMessageList.get(K-1).getContent();
+    }
+
+//    public String updateUserMobile(String newMobile, String oldMobile){
+//
+//    }
+
+    public String deleteGroup(Group group, User user){
+
+        if(!groupUserMap.containsKey(group)) return "not possible";
+
+        if(!adminMap.get(group).equals(user)) return "not possible";
+
+        groupUserMap.remove(group);
+        groupMessageMap.remove(group);
+        adminMap.remove(group);
+
+        return "SUCCESS";
     }
 }
