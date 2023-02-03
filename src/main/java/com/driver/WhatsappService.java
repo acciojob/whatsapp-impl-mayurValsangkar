@@ -41,4 +41,7 @@ public class WhatsappService {
         return whatsappRepository.deleteGroup(group, user);
     }
 
+    public String deleteMultipleMessages(Date start, Date end){
+        return whatsappRepository.deleteMultipleMessages(start,end);
+    }
 }

@@ -95,4 +95,9 @@ public class WhatsappController {
     public String deleteGroup(Group group, User user){
         return whatsappService.deleteGroup(group, user);
     }
+
+    @DeleteMapping("/delete-multiple-messages")
+    public String deleteMultipleMessages(Date start, Date end){
+        return whatsappService.deleteMultipleMessages(start, end);
+    }
 }
