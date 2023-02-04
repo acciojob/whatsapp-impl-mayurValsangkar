@@ -142,7 +142,7 @@ public class WhatsappRepository {
         for(Group group : groupUserMap.keySet()){
             if(groupUserMap.get(group).contains(user)){
                 userGroup = group;
-                if(Objects.equals(adminMap.get(userGroup).getName(), user.getName())){
+                if(adminMap.get(userGroup).equals(user)){
                     throw new Exception("Cannot remove admin");
                 }
                 userFound = true;
@@ -155,13 +155,10 @@ public class WhatsappRepository {
         }
 
         List<User> userList = groupUserMap.get(userGroup);
-
         List<User> updatedUserList = new ArrayList<>();
 
         for(User user1 : userList){
             if(user1.equals(user)){
-//                userList.remove(user);
-//                break;
                continue;
             }
             updatedUserList.add(user1);
@@ -169,22 +166,27 @@ public class WhatsappRepository {
         groupUserMap.put(userGroup, updatedUserList);
 
         List<Message> messageList = groupMessageMap.get(userGroup);
+        List<Message> updatedMessageList = new ArrayList<>();
+
         for(Message message : messageList){
             if(senderMap.get(message).equals(user)){
-                messageList.remove(message);
-                break;
+                continue;
             }
+            updatedMessageList.add(message);
         }
-        groupMessageMap.put(userGroup, messageList);
+        groupMessageMap.put(userGroup, updatedMessageList);
 
+        HashMap<Message, User> updatedSenderMap = new HashMap<>();
         for(Message message : senderMap.keySet()){
             if(senderMap.get(message).equals(user)){
-                senderMap.remove(user);
-                break;
+                continue;
             }
+            updatedSenderMap.put(message, senderMap.get(message));
         }
 
-        return groupUserMap.get(userGroup).size() + groupMessageMap.get(userGroup).size() + senderMap.size();
+        senderMap = updatedSenderMap;
+
+        return updatedUserList.size() + updatedMessageList.size() + updatedSenderMap.size();
     }
 
     public String findMessage(Date start, Date end, int K) throws Exception{
@@ -245,12 +247,14 @@ public class WhatsappRepository {
         for(Group group : groupUserMap.keySet()){
             List<Message> list = new ArrayList<>();
             list = groupMessageMap.get(group);
+            List<Message> newList = new ArrayList<>();
             for(Message message : list){
                 if(!updatedList.contains(message)){
-                    list.remove(message);
+                    continue;
                 }
+                newList.add(message);
             }
-            groupMessageMap.put(group, list);
+            groupMessageMap.put(group, newList);
         }
 
         return "Message Deleted Successfully";
