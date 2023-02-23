@@ -14,6 +14,7 @@ public class WhatsappRepository {
     private HashMap<Message, User> senderMap;
     private HashMap<Group, User> adminMap;
     private HashSet<String> userMobile;
+    private HashMap<Group, List<User>> multipleAdminMap;
     private int customGroupCount;
     private int messageId;
 
@@ -23,6 +24,7 @@ public class WhatsappRepository {
         this.senderMap = new HashMap<Message, User>();
         this.adminMap = new HashMap<Group, User>();
         this.userMobile = new HashSet<>();
+        this.multipleAdminMap = new HashMap<>();
         this.customGroupCount = 0;
         this.messageId = 0;
     }
@@ -258,5 +260,36 @@ public class WhatsappRepository {
         }
 
         return "Message Deleted Successfully";
+    }
+
+    // Multiple admin -> Created new HashMap -> HashMap<Group, List<User>> multipleAdminMap
+    public String addAdmin(User approver, User user, Group group){
+
+        if(!adminMap.get(group).equals(approver)){
+            return "approver has no rights";
+        }
+
+        boolean isMember = false;
+        List<User> userList  = groupUserMap.get(group);
+        for(User user1 : userList){
+            if(user1.equals(user)){
+                isMember = true;
+                break;
+            }
+        }
+
+        if(isMember==false){
+            return "user is not present in group";
+        }
+
+        List<User> adminList = new ArrayList<>();
+        if(multipleAdminMap.containsKey(group)){
+            adminList = multipleAdminMap.get(adminList);
+        }
+
+        adminList.add(user);
+        adminList.add(approver);
+
+        return "User is now admin";
     }
 }
